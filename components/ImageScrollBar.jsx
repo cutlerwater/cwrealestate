@@ -1,72 +1,48 @@
-import { Box, Flex, Spacer, Text } from '@chakra-ui/layout';
-import { Avatar } from '@chakra-ui/avatar';
-import { FaBed, FaBath } from 'react-icons/fa';
-import { BsGridFill } from 'react-icons/bs';
-import { GoVerified } from 'react-icons/go';
-import millify from 'millify';
+import { useContext } from 'react';
+import Image from 'next/image';
+import { Box, Icon, Flex } from '@chakra-ui/react';
+import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
+import { FaArrowAltCircleLeft, FaArrowAltCircleRight } from 'react-icons/fa';
 
-import { baseUrl, fetchApi } from '../../utils/fetchApi';
-import ImageScrollbar from '../../components/ImageScrollbar';
+const LeftArrow = () => {
+  const { scrollPrev } = useContext(VisibilityContext);
 
-const PropertyDetails = ({ propertyDetails: { price, rentFrequency, rooms, title, baths, area, agency, isVerified, description, type, purpose, furnishingStatus, amenities, photos } }) => (
-  <Box maxWidth='1000px' margin='auto' p='4'>
-    {photos && <ImageScrollbar data={photos} />}
-    <Box w='full' p='6'>
-      <Flex paddingTop='2' alignItems='center'>
-        <Box paddingRight='3' color='green.400'>{isVerified && <GoVerified />}</Box>
-        <Text fontWeight='bold' fontSize='lg'>
-          AED {price} {rentFrequency && `/${rentFrequency}`}
-        </Text>
-        <Spacer />
-        <Avatar size='sm' src={agency?.logo?.url}></Avatar>
-      </Flex>
-      <Flex alignItems='center' p='1' justifyContent='space-between' w='250px' color='blue.400'>
-        {rooms}<FaBed /> | {baths} <FaBath /> | {millify(area)} sqft <BsGridFill />
-      </Flex>
-    </Box>
-    <Box marginTop='2'>
-      <Text fontSize='lg' marginBottom='2' fontWeight='bold'>{title}</Text>
-      <Text lineHeight='2' color='gray.600'>{description}</Text>
-    </Box>
-    <Flex flexWrap='wrap' textTransform='uppercase' justifyContent='space-between'>
-      <Flex justifyContent='space-between' w='400px' borderBottom='1px' borderColor='gray.100' p='3'>
-        <Text>Type</Text>
-        <Text fontWeight='bold'>{type}</Text>
-      </Flex>
-      <Flex justifyContent='space-between' w='400px' borderBottom='1px' borderColor='gray.100' p='3'>
-        <Text>Purpose</Text>
-        <Text fontWeight='bold'>{purpose}</Text>
-      </Flex>
-      {furnishingStatus && (
-        <Flex justifyContent='space-between' w='400px' borderBottom='1px' borderColor='gray.100' p='3' >
-          <Text>Furnishing Status</Text>
-          <Text fontWeight='bold'>{furnishingStatus}</Text>
-        </Flex>
-      )}
+  return (
+    <Flex justifyContent='center' alignItems='center' marginRight='1'>
+      <Icon
+        as={FaArrowAltCircleLeft}
+        onClick={() => scrollPrev()}
+        fontSize='2xl'
+        cursor='pointer'
+        d={['none','none','none','block']}
+      />
     </Flex>
-    <Box>
-      {amenities.length && <Text fontSize='2xl' fontWeight='black' marginTop='5'>Facilites:</Text>}
-        <Flex flexWrap='wrap'>
-          {amenities?.map((item) => (
-              item?.amenities?.map((amenity) => (
-                <Text key={amenity.text} fontWeight='bold' color='blue.400' fontSize='l' p='2' bg='gray.200' m='1' borderRadius='5'>
-                  {amenity.text}
-                </Text>
-              ))
-          ))}
-        </Flex>
-    </Box>
-  </Box>
-);
+  );
+}
 
-export default PropertyDetails;
+const RightArrow = () => {
+  const { scrollNext } = useContext(VisibilityContext);
 
-export async function getServerSideProps({ params: { id } }) {
-  const data = await fetchApi(`${baseUrl}/properties/detail?externalID=${id}`);
-  
-  return {
-    props: {
-      propertyDetails: data,
-    },
-  };
+  return (
+    <Flex justifyContent='center' alignItems='center' marginLeft='1'>
+      <Icon
+        as={FaArrowAltCircleRight}
+        onClick={() => scrollNext()}
+        fontSize='2xl'
+        cursor='pointer'
+        d={['none','none','none','block']}
+    />
+    </Flex>
+  );
+}
+export default function ImageSrollbar({ data }) {
+  return (
+    <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow} style={{ overflow: 'hidden' }} >
+      {data.map((item) => (
+        <Box key={item.id} width='910px' itemId={item.id} overflow='hidden' p='1'>
+          <Image alt="property" placeholder="blur" blurDataURL={item.url} src={item.url} width={1000} height={500}  sizes="(max-width: 500px) 100px, (max-width: 1023px) 400px, 1000px" />
+        </Box>
+      ))}
+    </ScrollMenu>
+  );
 }
