@@ -14,7 +14,7 @@ const Navbar = () => (
       <Menu>
         <MenuButton as={IconButton} icon={<FcMenu />} variant='outline' color='red.400' />
         <MenuList>
-          <Link href='/' passHref>
+          <Link href='https://cutlerwater-realty-git-main-cutlerwater.vercel.app/' passHref>
             <MenuItem icon={<FcHome />}>Home</MenuItem>
           </Link>
           <Link href='/search' passHref>
@@ -25,6 +25,9 @@ const Navbar = () => (
           </Link>
           <Link href='/search?purpose=for-rent' passHref>
             <MenuItem icon={<FiKey />}>Rent Property</MenuItem>
+          </Link>
+          <Link href='https://cutlerwater-profile.netlify.app/' passHref>
+            <MenuItem icon={<FcHome />}>CutlerwaterItBlog</MenuItem>
           </Link>
         </MenuList>
       </Menu>
